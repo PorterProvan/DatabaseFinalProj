@@ -16,6 +16,11 @@ cur.executescript(ddl)
 
 #TIL HERE NOTHING SHOULD HAVE BEEN TOCUHED :)
 
+comments = [
+    ('1', '1', '1', 'I can see the test post')
+]
+cur.executemany("INSERT OR IGNORE INTO Comment VALUES (?, ?, ?, ?)", comments)
+
 locations = [
     ('1', 'Schoenecker Hall'),
     ('2', 'Ireland'),
@@ -39,11 +44,40 @@ locations = [
     ('20', 'Grace Hall'),
     ('21', 'OWS')
 ]
-cur.executemany("INSERT INTO Location VALUES (?, ?)", locations)
+cur.executemany("INSERT OR IGNORE INTO Location VALUES (?, ?)", locations)
 
+status = [
+    ('1', 'Lost'),
+    ('2', 'Found'),
+    ('3', 'Donated'),
+]
+cur.executemany("INSERT OR IGNORE INTO Status VALUES (?, ?)", status)
 
-#need this stoof to actually update the database, this should be at the end of every insertion or update jazz
+itemType = [
+    ('1', 'Clothing/Shoes'),
+    ('2', 'Electronics'),
+    ('3', 'St. Thomas ID'),
+    ('4', 'Wallet'),
+    ('5', 'Purse'),
+    ('6', 'Backpack'),
+    ('7', 'Water Bottle'),
+    ('8', 'Keys'),
+    ('9', 'Other')
+]
+cur.executemany("INSERT OR IGNORE INTO ItemType VALUES (?, ?)", itemType)
 
+users = [
+    ('1', 'Harrison@gmail.com'),
+    ('2', 'Porter@gmail.com'),
+    ('3', 'Josh@gmail.com')
+]
+cur.executemany("INSERT OR IGNORE INTO User VALUES (?, ?)", users)
+
+Items = [
+    ('1', '1', 'NULL', 'This is the Test Item', '2', '1', '9', '2025-05-04')
+]
+cur.executemany("INSERT OR IGNORE INTO Item VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Items)
+
+# need this stoof to actually update the database, this should be at the end of every insertion or update jazz
 con.commit()
-
 con.close()
