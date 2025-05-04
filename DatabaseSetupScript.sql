@@ -1,0 +1,43 @@
+CREATE TABLE IF NOT EXISTS User (
+  User_ID INTEGER PRIMARY KEY,
+  Email TEXT
+);
+
+CREATE TABLE IF NOT EXISTS ItemType (
+  Item_Type_ID INTEGER PRIMARY KEY,
+  Item_Category TEXT
+);
+
+CREATE TABLE IF NOT EXISTS Status (
+  Status_ID INTEGER PRIMARY KEY,
+  Status TEXT
+);
+
+CREATE TABLE IF NOT EXISTS Location (
+  Location_ID INTEGER PRIMARY KEY,
+  Building TEXT
+);
+
+CREATE TABLE IF NOT EXISTS Item (
+  Item_ID INTEGER PRIMARY KEY,
+  Location_ID INTEGER,
+  Image BLOB,
+  Description TEXT,
+  Status_ID INTEGER,
+  User_ID INTEGER,
+  Item_Type_ID INTEGER,
+  Date_Posted DATE,
+  FOREIGN KEY (Status_ID) REFERENCES Status(Status_ID),
+  FOREIGN KEY (Item_Type_ID) REFERENCES ItemType(Item_Type_ID),
+  FOREIGN KEY (Location_ID) REFERENCES Location(Location_ID),
+  FOREIGN KEY (User_ID) REFERENCES User(User_ID)
+);
+
+CREATE TABLE IF NOT EXISTS Comment (
+  Comment_ID INTEGER PRIMARY KEY,
+  Item_ID INTEGER,
+  User_ID INTEGER,
+  Comment TEXT,
+  FOREIGN KEY (User_ID) REFERENCES User(User_ID),
+  FOREIGN KEY (Item_ID) REFERENCES Item(Item_ID)
+);
