@@ -68,3 +68,38 @@ def addLostItem(user_id):
     conn.commit()
     print("Item successfully added.")
     conn.close()
+
+#This function is used to claim an item as found. It requires the item_id to be passed to it.
+# The function fetches the status ID for "found" and updates the item's status in the database.
+# It also checks if the item exists in the database and prints a message accordingly.
+def claimItem(item_id):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    #get the Status_ID for "found"
+    cursor.execute("SELECT Status_ID FROM Status WHERE Status = 'Found'")
+    result = cursor.fetchone()
+
+    if not result:
+        print("Error: 'Found' status not found in the database.")
+        conn.close()
+        return
+    
+    found_status_id = result[0]
+
+    #update the item to set its status to "found"
+    cursor.execute("""
+        UPDATE Item
+        SET Status_ID = ?
+        WHERE Item_ID = ?
+    """, (found_status_id, item_id))
+
+    #commit the change and close the connection
+    conn.commit()
+
+    if cursor.rowcount > 0:
+        print(f"Item {item_id} has been updated to 'Found'.")
+    else:
+        print(f"Error: Item {item_id} not found.")
+    
+    conn.close()
