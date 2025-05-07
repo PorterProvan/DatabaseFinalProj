@@ -34,8 +34,7 @@ def get_valid_input(prompt, valid_ids):
 #The function automatically fetches the status ID for "lost" and prompts the user to select the item type and location from the database.
 #The helper functions display_options and get_valid_input are used to display the available options and validate user input.
 #
-def addLostItem(user_id):
-    conn = sqlite3.connect(DB_PATH)
+def addLostItem(user_id, conn):
     cursor = conn.cursor()
     #Get status ID for "lost"
     cursor.execute("SELECT Status_ID FROM Status WHERE Status = 'Lost'")
@@ -67,13 +66,11 @@ def addLostItem(user_id):
 
     conn.commit()
     print("Item successfully added.")
-    conn.close()
 
 #This function is used to claim an item as found. It requires the item_id to be passed to it.
 # The function fetches the status ID for "found" and updates the item's status in the database.
 # It also checks if the item exists in the database and prints a message accordingly.
-def claimItem(item_id):
-    conn = sqlite3.connect(DB_PATH)
+def claimItem(item_id, conn):
     cursor = conn.cursor()
 
     #get the Status_ID for "found"
@@ -102,11 +99,8 @@ def claimItem(item_id):
     else:
         print(f"Error: Item {item_id} not found.")
     
-    conn.close()
-    
 #This function is used to update the status of items that have been posted for more than 2 weeks to "Donated".
-def updateDonated():
-    conn = sqlite3.connect(DB_PATH)
+def updateDonated(conn):
     cursor = conn.cursor()
 
     #get the Status_ID for "Donated"
@@ -115,7 +109,6 @@ def updateDonated():
     
     if not result:
         print("Error: 'Donated' status not found in the database.")
-        conn.close()
         return
     
     donated_status_id = result[0]
@@ -136,5 +129,3 @@ def updateDonated():
         print(f"Successfully updated {cursor.rowcount} items to 'Donated'.")
     else:
         print("No items found that were posted more than 2 weeks ago.")
-
-    conn.close()

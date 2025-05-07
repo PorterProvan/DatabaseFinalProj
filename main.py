@@ -1,14 +1,16 @@
 import sqlite3
 import time
+from config import DB_PATH
+from createPost import addLostItem, claimItem
 
 #DONT TOUCH DIS
-
-con = sqlite3.connect("DataBaseFinalProj.db")
+userID = None
+con = sqlite3.connect(DB_PATH)
 
 cur = con.cursor()
 
 # read the airline.sql DDL file 
-with open(r"C:\Users\josh4\OneDrive - University of St. Thomas\Spring 2025\CISC 450\DatabaseFinalProj\DatabaseSetupScript.sql", "r") as f:
+with open("DatabaseSetupScript.sql", "r") as f:
     ddl = f.read()
 
 # execute the DDL file
@@ -81,14 +83,13 @@ cur.executemany("INSERT OR IGNORE INTO Item VALUES (?, ?, ?, ?, ?, ?, ?, ?)", It
 
 # need this stoof to actually update the database, this should be at the end of every insertion or update jazz
 con.commit()
-con.close()
 
 def main():
     running = True
     while(running):
         print("** Welcome to the St. Thomas Lost and Found! **")
-        print("To Login: 1")
-        print("To Quit: 2")
+        print("1: To Login")
+        print("2: To Quit")
         while True:
             try:
                 user_input = input("Please enter a Command: ")
@@ -110,38 +111,38 @@ def main():
                         print("Invalid input. Please enter a valid UST Email.")
                     else:
                         loggedIn = True
+                        cur = con.cursor()
+                        cur.execute("INSERT OR IGNORE INTO User (email) VALUES (?)", (user,))
+                        cur.execute("SELECT User_ID FROM User WHERE Email = ?", (user,))
+                        userID = cur.fetchone()[0]
+                        con.commit()
                         print("\nThank you: " + user + "\nWelcome to UST Lost and Found")
                         break
             while(loggedIn):
                 while True:
                     try:
-                        print("Would you like too:\n\tTo add a new lost item: 1\n\tUpdate lost item: 2\n\tRemove Post: 3\n\tView all posts: 4\n\tLog out: 5")
+                        print("Would you like too:\n\t1: To add a new lost item\\n\t2: Claim Item\n\t3: View all posts\n\t4: Log out")
                         number = int(input("Enter a Command: "))
                         break
                     except ValueError:
                         print("Invalid input. Please enter a valid command integer.")
                 if(number == 1):
-                    addLostItem()
+                    addLostItem(userID, con) #this will prompt user to add item
                 if(number == 2):
-                    updateLostItem()
+                    itemID = input("Enter the ID of the item you want to claim: ")
+                    claimItem(itemID, con) #this will automatically update the status of the item to be claimed
                 if(number == 3):
-                    removePost()
-                if(number == 4):
                     viewAllPosts()
-                if(number == 5):
-                    print("EASY")
+                if(number == 4):
                     loggedIn = False
                     user = ""
                 print(number)
     print("SessionEnded")
 
-def addLostItem():
-    return False
 def updateLostItem():
-    return False
-def removePost():
     return False
 def viewAllPosts():
     return False
 
 main()
+con.close()

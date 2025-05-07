@@ -1,1 +1,1 @@
-DB_PATH = "/Users/porter/Downloads/DatabaseFinalProj/DataBaseFinalProj.db"
+DB_PATH = "DataBaseFinalProj.db"
