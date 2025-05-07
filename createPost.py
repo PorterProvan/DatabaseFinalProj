@@ -1,8 +1,7 @@
 
 import sqlite3
+from config import DB_PATH
 from datetime import datetime
-
-DB_PATH = "/Users/porter/Downloads/DatabaseFinalProj/DataBaseFinalProj.db"
 
 
 #This function is used to display the available options for ItemType and Location.
