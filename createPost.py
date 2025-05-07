@@ -1,7 +1,7 @@
 
 import sqlite3
 from config import DB_PATH
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 #This function is used to display the available options for ItemType and Location.
@@ -102,4 +102,39 @@ def claimItem(item_id):
     else:
         print(f"Error: Item {item_id} not found.")
     
+    conn.close()
+    
+#This function is used to update the status of items that have been posted for more than 2 weeks to "Donated".
+def updateDonated():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    #get the Status_ID for "Donated"
+    cursor.execute("SELECT Status_ID FROM Status WHERE Status = 'Donated'")
+    result = cursor.fetchone()
+    
+    if not result:
+        print("Error: 'Donated' status not found in the database.")
+        conn.close()
+        return
+    
+    donated_status_id = result[0]
+
+    #get the date 2 weeks ago
+    two_weeks_ago = (datetime.now() - timedelta(weeks=2)).strftime("%Y-%m-%d")
+
+    #update items posted more than 2 weeks ago
+    cursor.execute("""
+        UPDATE Item
+        SET Status_ID = ?
+        WHERE Date(Date_Posted) < Date(?)
+    """, (donated_status_id, two_weeks_ago))
+
+    conn.commit()
+
+    if cursor.rowcount > 0:
+        print(f"Successfully updated {cursor.rowcount} items to 'Donated'.")
+    else:
+        print("No items found that were posted more than 2 weeks ago.")
+
     conn.close()
