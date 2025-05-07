@@ -61,7 +61,7 @@ def addLostItem(user_id):
 
     # You can leave image as None or add file reading logic
     image_blob = None
-    date_posted = date_posted = datetime.now().date().isoformat()
+    date_posted = datetime.now().strftime("%Y-%m-%d")
 
     # Insert the item
     cursor.execute("""
