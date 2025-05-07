@@ -1,4 +1,5 @@
 import sqlite3
+import time
 
 #DONT TOUCH DIS
 
@@ -7,7 +8,7 @@ con = sqlite3.connect("DataBaseFinalProj.db")
 cur = con.cursor()
 
 # read the airline.sql DDL file 
-with open("DatabaseSetupScript.sql", "r") as f:
+with open(r"C:\Users\josh4\OneDrive - University of St. Thomas\Spring 2025\CISC 450\DatabaseFinalProj\DatabaseSetupScript.sql", "r") as f:
     ddl = f.read()
 
 # execute the DDL file
@@ -81,3 +82,66 @@ cur.executemany("INSERT OR IGNORE INTO Item VALUES (?, ?, ?, ?, ?, ?, ?, ?)", It
 # need this stoof to actually update the database, this should be at the end of every insertion or update jazz
 con.commit()
 con.close()
+
+def main():
+    running = True
+    while(running):
+        print("** Welcome to the St. Thomas Lost and Found! **")
+        print("To Login: 1")
+        print("To Quit: 2")
+        while True:
+            try:
+                user_input = input("Please enter a Command: ")
+                # Attempt to convert the input to the desired type (e.g., integer)
+                value = int(user_input)
+                # If the conversion is successful, the input is valid, exit the loop
+                break
+            except ValueError:
+                print("Please enter a valid Command.")
+        # Use the validated value
+        if(value == 2): running = False
+        if(value == 1):
+            print("Please enter your St. Thomas email.")
+            while True:
+                    user = input("Email: ")
+                    user.strip
+                    user.lower
+                    if(user.endswith("stthomas.edu") == False):
+                        print("Invalid input. Please enter a valid UST Email.")
+                    else:
+                        loggedIn = True
+                        print("\nThank you: " + user + "\nWelcome to UST Lost and Found")
+                        break
+            while(loggedIn):
+                while True:
+                    try:
+                        print("Would you like too:\n\tTo add a new lost item: 1\n\tUpdate lost item: 2\n\tRemove Post: 3\n\tView all posts: 4\n\tLog out: 5")
+                        number = int(input("Enter a Command: "))
+                        break
+                    except ValueError:
+                        print("Invalid input. Please enter a valid command integer.")
+                if(number == 1):
+                    addLostItem()
+                if(number == 2):
+                    updateLostItem()
+                if(number == 3):
+                    removePost()
+                if(number == 4):
+                    viewAllPosts()
+                if(number == 5):
+                    print("EASY")
+                    loggedIn = False
+                    user = ""
+                print(number)
+    print("SessionEnded")
+
+def addLostItem():
+    return False
+def updateLostItem():
+    return False
+def removePost():
+    return False
+def viewAllPosts():
+    return False
+
+main()
