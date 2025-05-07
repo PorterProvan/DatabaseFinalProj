@@ -39,7 +39,6 @@ def get_valid_input(prompt, valid_ids):
 def addLostItem(user_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    user_id = 1
     # Get status ID for "lost"
     cursor.execute("SELECT Status_ID FROM Status WHERE Status = 'Lost'")
     result = cursor.fetchone()
