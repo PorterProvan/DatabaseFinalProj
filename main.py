@@ -144,4 +144,13 @@ def removePost():
 def viewAllPosts():
     return False
 
+def viewAllPosts():
+    cur.execute("SELECT * FROM Item NATURAL JOIN Status NATURAL JOIN Comment WHERE Status = 'Lost'")
+    rows = cur.fetchall
+    #View post code
+    for row in rows:
+        print(row)
+    input("To Return Press 'Enter'")
+    return False
+
 main()
