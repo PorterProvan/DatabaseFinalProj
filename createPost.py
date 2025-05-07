@@ -2,7 +2,6 @@
 import sqlite3
 from datetime import datetime
 
-# Path to your SQLite DB
 DB_PATH = "/Users/porter/Downloads/DatabaseFinalProj/DataBaseFinalProj.db"
 
 
@@ -39,7 +38,7 @@ def get_valid_input(prompt, valid_ids):
 def addLostItem(user_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    # Get status ID for "lost"
+    #Get status ID for "lost"
     cursor.execute("SELECT Status_ID FROM Status WHERE Status = 'Lost'")
     result = cursor.fetchone()
     if not result:
@@ -47,22 +46,21 @@ def addLostItem(user_id):
         return
     lost_status_id = result[0]
 
-    # Display and select ItemType
+    #Display and select ItemType
     item_type_ids = display_options(cursor, "ItemType", "Item_Type_ID", "Item_Category")
     item_type_id = get_valid_input("Enter the ItemType ID: ", item_type_ids)
 
-    # Display and select Location
+    #Display and select Location
     location_ids = display_options(cursor, "Location", "Location_ID", "Building")
     location_id = get_valid_input("Enter the Location ID: ", location_ids)
 
-    # Get other item details
+    #Get other item details
     description = input("Enter item description: ")
 
-    # You can leave image as None or add file reading logic
     image_blob = None
     date_posted = datetime.now().strftime("%Y-%m-%d")
 
-    # Insert the item
+    #Insert the item
     cursor.execute("""
         INSERT INTO Item (Location_ID, Image, Description, Status_ID, User_ID, Item_Type_ID, Date_Posted)
         VALUES (?, ?, ?, ?, ?, ?, ?)
