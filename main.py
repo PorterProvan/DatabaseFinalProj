@@ -20,7 +20,7 @@ cur.executescript(ddl)
 #TIL HERE NOTHING SHOULD HAVE BEEN TOCUHED :)
 
 comments = [
-    ('1', '1', '1', 'I can see the test post')
+    ('2', '1', '1', 'This is the secon dcomment')
 ]
 cur.executemany("INSERT OR IGNORE INTO Comment VALUES (?, ?, ?, ?)", comments)
 
@@ -121,7 +121,11 @@ def main():
             while(loggedIn):
                 while True:
                     try:
-                        print("Would you like too:\n\t1: To add a new lost item\\n\t2: Claim Item\n\t3: View all posts\n\t4: Log out")
+                        print("Would you like too:\n" + 
+                        "1: To add a new lost item\n" + 
+                        "2: Claim Item\n" +
+                        "3: View all posts\n" +
+                        "4: Log out")
                         number = int(input("Enter a Command: "))
                         break
                     except ValueError:
@@ -132,7 +136,56 @@ def main():
                     itemID = input("Enter the ID of the item you want to claim: ")
                     claimItem(itemID, con) #this will automatically update the status of the item to be claimed
                 if(number == 3):
-                    viewAllPosts()
+                    print("All posts:")
+                    cur.execute("SELECT * FROM Item")
+                    items = cur.fetchall()
+                    # Print description of each item
+                    count = 1
+                    for item in items:
+                        print(str(count) + ": " + item[3])
+                        count += 1
+            
+                    item_num = input("Enter an item number to view details: ")
+                    selected_item = items[int(item_num)-1]
+                    selected_item_id = selected_item[0]
+                    
+                    print()
+                    print(f"Details for {item[3]}:")
+                    cur.execute("SELECT Building FROM Location WHERE Location_ID = ?", (selected_item[5],))
+                    item_location = cur.fetchall()[0][0]
+                    
+                    cur.execute("SELECT Email FROM User WHERE User_ID = ?", (selected_item[1],))
+                    item_user = cur.fetchall()[0][0]
+
+                    print()
+                    print("Location found: " + item_location + "\n" +
+                          "Date found: " + selected_item[7] + "\n" +
+                          "Posted by: " + item_user)
+
+                    print()
+                    view_comment = input("View comments? y/n: ")
+                    if view_comment == "y":                        
+                        cur.execute("SELECT * FROM Comment WHERE Item_ID = ?", (selected_item[0],))
+                        comments_table = cur.fetchall()
+                        
+                        print()
+                        print(f"Comments from post {item_num}:")
+                        print()
+
+                        count = 1
+                        for comment_row in comments_table:
+                            print(f"{count}: " + comment_row[3])
+                            count += 1
+                        
+                        print()
+                        make_comment = input("Make comment? y/n: ")
+                        if make_comment == "y":
+                            comment = input("Enter your comment: ")
+                            cur.execute("INSERT INTO Comment (User_ID, Item_ID, Comment) VALUES (?, ?, ?)", (userID, selected_item_id, comment))
+                            con.commit()
+                        print()
+                    
+
                 if(number == 4):
                     loggedIn = False
                     user = ""
@@ -142,6 +195,7 @@ def main():
 def updateLostItem():
     return False
 def viewAllPosts():
+
     return False
 
 main()
