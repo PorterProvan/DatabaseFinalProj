@@ -1,7 +1,7 @@
 import sqlite3
 import time
 from config import DB_PATH
-from createPost import addLostItem, claimItem
+from createPost import addLostItem, claimItem, updateDonated
 
 #DONT TOUCH DIS
 userID = None
@@ -85,6 +85,7 @@ cur.executemany("INSERT OR IGNORE INTO Item VALUES (?, ?, ?, ?, ?, ?, ?, ?)", It
 con.commit()
 
 def main():
+    updateDonated(con)
     running = True
     while(running):
         print("** Welcome to the St. Thomas Lost and Found! **")
@@ -137,7 +138,7 @@ def main():
                     claimItem(itemID, con) #this will automatically update the status of the item to be claimed
                 if(number == 3):
                     print("All posts:")
-                    cur.execute("SELECT * FROM Item")
+                    cur.execute("SELECT * FROM Item WHERE Status_ID = 1")
                     items = cur.fetchall()
                     # Print description of each item
                     count = 1
@@ -163,8 +164,8 @@ def main():
                           "Posted by: " + item_user)
 
                     print()
-                    view_comment = input("View comments? y/n: ")
-                    if view_comment == "y":                        
+                    view_comment = input("View comments? Y/N: ")
+                    if view_comment.lower() == "y":                        
                         cur.execute("SELECT * FROM Comment WHERE Item_ID = ?", (selected_item[0],))
                         comments_table = cur.fetchall()
                         
@@ -178,8 +179,8 @@ def main():
                             count += 1
                         
                         print()
-                        make_comment = input("Make comment? y/n: ")
-                        if make_comment == "y":
+                        make_comment = input("Make comment? Y/N: ")
+                        if make_comment.lower() == "y":
                             comment = input("Enter your comment: ")
                             cur.execute("INSERT INTO Comment (User_ID, Item_ID, Comment) VALUES (?, ?, ?)", (userID, selected_item_id, comment))
                             con.commit()
@@ -189,6 +190,8 @@ def main():
                 if(number == 4):
                     loggedIn = False
                     user = ""
+                    print("SessionEnded")
+                    exit()
                 print(number)
     print("SessionEnded")
 
