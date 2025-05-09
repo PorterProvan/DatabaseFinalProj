@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 
 #This function is used to display the available options for ItemType and Location.
-def display_options(cursor, table, id_col, name_col):
+def displayOptions(cursor, table, id_col, name_col):
     cursor.execute(f"SELECT {id_col}, {name_col} FROM {table}")
     rows = cursor.fetchall()
     print(f"\nAvailable {table}:")
@@ -16,7 +16,7 @@ def display_options(cursor, table, id_col, name_col):
 
 #This function is used to get valid input from the user. 
 # It prompts the user with a message and checks if the input is in the list of valid IDs.
-def get_valid_input(prompt, valid_ids):
+def getValidInput(prompt, valid_ids):
     while True:
         try:
             value = int(input(prompt))
@@ -45,12 +45,12 @@ def addLostItem(user_id, conn):
     lost_status_id = result[0]
 
     #Display and select ItemType
-    item_type_ids = display_options(cursor, "ItemType", "Item_Type_ID", "Item_Category")
-    item_type_id = get_valid_input("Enter the ItemType ID: ", item_type_ids)
+    item_type_ids = displayOptions(cursor, "ItemType", "Item_Type_ID", "Item_Category")
+    item_type_id = getValidInput("Enter the ItemType ID: ", item_type_ids)
 
     #Display and select Location
-    location_ids = display_options(cursor, "Location", "Location_ID", "Building")
-    location_id = get_valid_input("Enter the Location ID: ", location_ids)
+    location_ids = displayOptions(cursor, "Location", "Location_ID", "Building")
+    location_id = getValidInput("Enter the Location ID: ", location_ids)
 
     #Get other item details
     description = input("Enter item description: ")
