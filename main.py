@@ -82,7 +82,6 @@ cur.executemany("INSERT OR IGNORE INTO Item VALUES (?, ?, ?, ?, ?, ?, ?, ?)", It
 con.commit()
 
 def main():
-    updateDonated(con)
     running = True
     while(running):
 
