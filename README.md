@@ -1,7 +1,14 @@
 # Database Final Project -- Harrison, Porter, and Josh
 
-### Setting up
-# Install dependencies
+## Setting up
+
+Install dependencies:
+
+`pip install termcolor`
+
+## Running the app
+
+
 
 
 
