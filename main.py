@@ -193,12 +193,11 @@ def main():
 
                 ### Claim item    
                 elif(number == 2):
-                    clear()
                     cur.execute("SELECT * FROM Item WHERE Status_ID = 1") # Select all items that are lost 
                     items = cur.fetchall()
                     zero_items = len(items) == 0
                     while True:
-
+                        clear()
                         the_items = colored("Available items to claim:\n", "magenta")
 
                         # Print description of each item
