@@ -1,6 +1,6 @@
 import sqlite3
 from config import DB_PATH
-from createPost import addLostItem, claimItem, updateDonated
+from otherFuncs import addLostItem, claimItem
 from termcolor import colored
 import time
 
