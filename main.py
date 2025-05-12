@@ -4,7 +4,9 @@ from createPost import addLostItem, claimItem, updateDonated
 from termcolor import colored
 import time
 
-#DONT TOUCH DIS
+#from datetime import datetime, timedelta
+
+# DONT TOUCH DIS
 userID = None
 con = sqlite3.connect(DB_PATH)
 
@@ -14,11 +16,7 @@ cur = con.cursor()
 with open("DatabaseSetupScript.sql", "r") as f:
     ddl = f.read()
 
-# execute the DDL file
-# executescript can run multiple SQL statements at once
 cur.executescript(ddl)
-
-#TIL HERE NOTHING SHOULD HAVE BEEN TOCUHED :)
 
 comments = [
     ('2', '1', '1', 'This is the secon dcomment')
@@ -81,42 +79,44 @@ Items = [
     ('1', '1', 'NULL', 'This is the Test Item', '2', '1', '9', '2025-05-04')
 ]
 cur.executemany("INSERT OR IGNORE INTO Item VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Items)
-
-# need this stoof to actually update the database, this should be at the end of every insertion or update jazz
 con.commit()
 
 def main():
     updateDonated(con)
     running = True
-    clear()
     while(running):
-        # Show login menu
-        print(colored("Welcome to the St. Thomas Lost and Found!", "magenta"))
-        print()
-        print("1: Login")
-        print(colored("2: Quit", "red"))
-        print()
+
         while True:
+            clear()
+            # Show login menu
+            print(colored("Welcome to the St. Thomas Lost and Found!", "magenta"))
+            print()
+            print("1: Login")
+            print(colored("2: Quit", "red"))
+            print()
             try:
                 user_input = input("Option: ")
                 value = int(user_input)
                 break
             except ValueError:
-                print(colored("Enter a valid option please!", "red"))
-                print()
-        if(value == 2): running = False
-        if(value == 1):
-            clear()
-            print(colored("Please enter your St. Thomas email.", "magenta"))
+                clear()
+                print(colored("\n\nEnter a valid option please!\n\n", "red"))
+                time.sleep(0.5)
+
+        if (value == 2): 
+            running = False
+        elif (value == 1):
             NotLoggedIn = True
             while NotLoggedIn:
+                    clear()
+                    print(colored("Please enter your St. Thomas email.", "magenta"))
                     print()
-                    email = input("Email: ")
-                    email.strip
-                    email.lower
+                    email = input("Email: ").strip("").lower()
                     username = email.split("@")[0]
                     if len(username)!=8 or email.endswith("stthomas.edu") == False:
-                        print(colored("Please enter a valid UST Email.", "red"))
+                        clear()
+                        print(colored("\n\nPlease enter a valid UST Email!\n\n", "red"))
+                        time.sleep(.5)
                     else:
                         clear()
                         cur = con.cursor()
@@ -124,8 +124,10 @@ def main():
                         cur.execute("SELECT User_ID FROM User WHERE Email = ?", (email,))
                         userID = cur.fetchone()[0]
                         con.commit()
+
+                        # Print "loading" screen
                         clear()
-                        print(colored("Successfully logged in:", "green") + ": " + email)
+                        print(colored("Successfully logged in: ", "green") + email)
                         print()
                         
                         print(colored("" +
@@ -167,138 +169,215 @@ def main():
                                 "   `YbodP'    8oo88888P'      o888o", 
                             "magenta"))
                             print()
-                            print("---------------------------------------------------------")
+                            print("--------------------------------------")
+                            print("---     LOST     AND     FOUND     ---")
+                            print("--------------------------------------")
                             print()
                             print(colored("Would you like to do?", "magenta"))
                             print()
                             print( 
                             "1: Create a post for a lost item\n" + 
-                            "2: Claim a lost item item\n" +
+                            "2: Claim a lost item\n" +
                             "3: View all posts")
                             print(colored("4: Log out", "red"))
                             print()
-                            number = int(input("Choose: "))
+                            number = int(input("Option: "))
                             break
                         except ValueError:
-                            print(colored("Enter a valid option please!", "red"))
+                            clear()
+                            print(colored("\n\nEnter a valid option please!\n\n", "red"))
+                            time.sleep(.5)
 
                 ### Create a post for a lost item        
                 if(number == 1):
-                    ### TODO: finish touching up this function
-                    clear()
                     addLostItem(userID, con) # This will prompt user to add item
 
                 ### Claim item    
-                if(number == 2):
-                    clear()
-                    cur.execute("SELECT * FROM Item WHERE Status_ID = 1") # Select all items that are lost 
-                    items = cur.fetchall()
+                elif(number == 2):
+                    while True:
+                        clear()
+                        cur.execute("SELECT * FROM Item WHERE Status_ID = 1") # Select all items that are lost 
+                        items = cur.fetchall()
 
-                    # Print description of each item
-                    count = 1
-                    for item in items:
-                        print(str(count) + ": " + item[3])
-                        count += 1
-                    itemID = input("Enter the ID of the item you want to claim: ")
-                    claimItem(itemID, con)  # Updates the status of the item to be claimed
+                        the_items = colored("Available items to claim:\n\n", "magenta")
+                        # Print description of each item
+                        count = 1
+                        for item in items:
+                            the_items = the_items + colored(str(count) + ": ", "magenta") + item[3] + "\n"
+                            count += 1
+                        print(the_items)
+                        itemID = input("Enter the " + colored("item", "magenta") + " you would like to claim: ")
+                        try:
+                            itemID = int(itemID)
+                            if itemID >= 1 and itemID <= len(items):
+                                while True:
+                                    clear()
+                                    print(the_items)
+                                    claim_input = input(f"Are you sure you'd like to claim item {itemID}? " + colored("Y", "green") + "/" + colored("N\n\n", "red"))
+                                    if claim_input.lower() == "y":
+                                        claimItem(itemID, con)
+                                        clear()
+                                        print(colored("\n\nItem successfully claimed.\n\n", "green"))
+                                        time.sleep(0.5)
+                                        break
+                                    elif claim_input.lower() == "n":
+                                        clear()
+                                        print("\n\nReturning to main menu...\n\n")
+                                        time.sleep(0.5)
+                                        break
+                                    else:
+                                        clear()
+                                        print(colored("\n\nEnter a valid option please!\n\n", "red"))
+                                        time.sleep(0.5) 
+
+                                break
+
+                            else:
+                                # User entered invalid int
+                                clear()
+                                print(colored("\n\nEnter a valid option please!\n\n", "red"))
+                                time.sleep(0.5) 
+
+                        except ValueError:
+                            # User entered invalid string
+                            clear()
+                            print(colored("\n\nEnter a valid option please!\n\n", "red"))
+                            time.sleep(0.5) 
 
                 ### View all posts    
-                if(skip_to_posts or number == 3):
+                elif(skip_to_posts or number == 3):
                     clear()
                     print(colored("All posts:", "magenta"))
                     print()
                     
                     # Select all lost items
                     cur.execute("SELECT * FROM Item WHERE Status_ID = 1")
+                    items = cur.fetchall()
 
                     # Print description of every current posted item
-                    items = cur.fetchall()
                     count = 1
                     for item in items:
-                        print(str(count) + ": " + item[3])
+                        print(colored(str(count) + ": ", "magenta") + item[3])
                         count += 1
 
                     # Ask user to pick an item to view more details about it
                     print()
-                    item_num = input("Enter Q to return to the main menu, or choose an item to view details: ")
-                    if item_num != "Q":
-                        skip_to_posts = False
+                    item_num = input("Enter " + colored("Q", "red") + " to return to the main menu, or " + colored("enter an item number", "magenta") + " to view details: ")    
 
-                        selected_item = items[int(item_num)-1]
-                        selected_item_id = selected_item[0]
-                        
-                        # Show details
+                    # Handle user going from all posts to main menu
+                    if item_num.lower() == "q":
+                        skip_to_posts = False
                         clear()
-
-                        # Get post's item type
-                        cur.execute("SELECT Item_Category FROM ItemType where Item_Type_ID = ?", (item[6],))
-                        item_type = cur.fetchall()[0][0]
-                        
-                        # Get post's location
-                        cur.execute("SELECT Building FROM Location WHERE Location_ID = ?", (selected_item[5],))
-                        item_location = cur.fetchall()[0][0]
-                        
-                        # Get poster's email
-                        cur.execute("SELECT Email FROM User WHERE User_ID = ?", (selected_item[1],))
-                        item_user = cur.fetchall()[0][0]
-
-                        print(colored(f"Details for the {item_type}:", "magenta"))
-                        print()
-                        print(colored("Description: ", "magenta") + selected_item[3]+ "\n" +
-                            colored("Location found: ", "magenta") + item_location + "\n" +
-                            colored("Type: ", "magenta") + item_type + "\n" +
-                            colored("Date found: ", "magenta") + selected_item[7] + "\n" +
-                            colored("Posted by: ", "magenta") + item_user)
-
-                        # Prompt user to see comments
-                        print()
-                        view_comment = input("Enter C to view comments, or P to go back: ")
-                        if view_comment.lower() == "c":                        
-                            cur.execute("SELECT * FROM Comment WHERE Item_ID = ?", (selected_item[0],))
-                            comments_table = cur.fetchall()
-                            
-                            # Show comments
-                            print()
-                            print(f"Comments from post {item_num}:")
-                            print()
-
-                            count = 1
-                            for comment_row in comments_table:
-                                print(f"{count}: " + comment_row[3])
-                                count += 1
-                            
-                            # Handle comment
-                            print()
-                            make_comment = input("Make a comment? " + colored("Y", "green") + "/" + colored("N", "red") + ": ")
-                            if make_comment.lower() == "y":
-                                comment = input("Enter your comment: ")
-                                cur.execute("INSERT INTO Comment (User_ID, Item_ID, Comment) VALUES (?, ?, ?)", (userID, selected_item_id, comment))
-                                con.commit()
-                            print()
-
-                        # Handle user going from 
-                        elif view_comment.lower() == "p":
-                            skip_to_posts = True
-                            print("Returning to posts...")
-                            time.sleep(0.5)
-
-                    elif item_num == "Q":
-                        skip_to_posts = False
-                        print("Returning to main menu")
+                        print("\n\nReturning to main menu...\n\n")
                         time.sleep(0.5)
-                    
                     else:
-                        ## TODO: handle invalid option
-                        print("Invalid option")
-                        time.sleep(0.5)
 
+                        try:
+                            while True:
+                                skip_to_posts = False
+
+                                selected_item = items[int(item_num)-1]
+                                
+                                selected_item_id = selected_item[0]
+                                
+                                # Show details
+                                clear()
+
+                                # Get post's item type
+                                cur.execute("SELECT Item_Category FROM ItemType where Item_Type_ID = ?", (item[6],))
+                                item_type = cur.fetchall()[0][0]
+                                
+                                # Get post's location
+                                cur.execute("SELECT Building FROM Location WHERE Location_ID = ?", (selected_item[5],))
+                                item_location = cur.fetchall()[0][0]
+                                
+                                # Get poster's email
+                                cur.execute("SELECT Email FROM User WHERE User_ID = ?", (selected_item[1],))
+                                item_user = cur.fetchall()[0][0]
+                                # Show post details
+                                print(colored("Details:", "magenta"))
+                                print()
+                                print(colored("Description: ", "magenta") + selected_item[3]+ "\n" +
+                                    colored("Location found: ", "magenta") + item_location + "\n" +
+                                    colored("Type: ", "magenta") + item_type + "\n" +
+                                    colored("Date found: ", "magenta") + selected_item[7] + "\n" +
+                                    colored("Posted by: ", "magenta") + item_user)
+                                print()
+
+                                # Prompt user to see comments
+                                view_comment = input("Enter " + colored("C", "magenta") +" to view comments, or " + colored("Q", "red")+ " to go back: ")
+                                if view_comment.lower() == "c":                        
+                                    cur.execute("SELECT * FROM Comment WHERE Item_ID = ?", (selected_item[0],))
+                                    comments_table = cur.fetchall()
+                                    
+                                    # Show comments
+                                    print()
+                                    print(colored("Comments:", "magenta"))
+                                    print()
+
+                                    count = 1
+                                    if len(comments_table) != 0:
+                                        for comment_row in comments_table:
+                                            print(colored(f"{count}: ", "magenta") + comment_row[3])
+                                            count += 1
+                                    else:
+                                        print("             No comments :(") 
+                                        print("Do you know who's this is? Let them know!")
+                                    
+                                    # Handle comment
+                                    print()
+                                    make_comment = input("Enter " + colored("C", "green") + " to make comment / " + colored("Q", "red") + " to return to posts: ")
+                                    if make_comment.lower() == "c":
+                                        print()
+                                        comment = input("Enter your comment: ")
+                                        cur.execute("INSERT INTO Comment (User_ID, Item_ID, Comment) VALUES (?, ?, ?)", (userID, selected_item_id, comment))
+                                        con.commit()
+
+                                        clear()
+                                        print(colored("\n\nComment successfully added on ", "green") + f"post {item_num}\n\n")
+                                        skip_to_posts = True
+                                        time.sleep(1)
+                                        break
+                                    else:
+                                        skip_to_posts = True
+                                        clear()
+                                        print("\n\nReturning to posts...\n\n")
+                                        time.sleep(0.5)
+                                        break
+
+                                # Handle user going from details to c posts
+                                elif view_comment.lower() == "q":
+                                    skip_to_posts = True
+                                    clear()
+                                    print("\n\nReturning to posts...\n\n")
+                                    time.sleep(0.5)
+                                    break
+                                else:
+                                    clear()
+                                    print(colored("\n\nEnter a valid option please!\n\n", "red"))
+                                    time.sleep(0.5) 
+
+                        except ValueError:
+                            skip_to_posts = True
+                            clear()
+                            print(colored("\n\nEnter a valid option please!\n\n", "red"))
+                            time.sleep(0.5) 
                     
                 ### Log out, end session
-                if(number == 4):
+                elif (number == 4):
                     loggedIn = False
-                    print("Session ended.")
-                    exit()
-                print(number)
+                    NotLoggedIn = True
+                
+                ### Handle invalid input on main menu
+                else:
+                    clear()
+                    print(colored("\n\nEnter a valid option please!\n\n", "red"))
+                    time.sleep(0.5)
+        else:
+            clear()
+            print(colored("\n\nEnter a valid option please!\n\n", "red"))
+            time.sleep(.5)
+    clear()
     print("Session ended.")
 
 ### Clears the terminal
