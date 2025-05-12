@@ -194,28 +194,41 @@ def main():
 
                 ### Claim item    
                 elif(number == 2):
+                    clear()
+                    cur.execute("SELECT * FROM Item WHERE Status_ID = 1") # Select all items that are lost 
+                    items = cur.fetchall()
+                    zero_items = len(items) == 0
                     while True:
-                        clear()
-                        cur.execute("SELECT * FROM Item WHERE Status_ID = 1") # Select all items that are lost 
-                        items = cur.fetchall()
 
-                        the_items = colored("Available items to claim:\n\n", "magenta")
+                        the_items = colored("Available items to claim:\n", "magenta")
+
                         # Print description of each item
-                        count = 1
-                        for item in items:
-                            the_items = the_items + colored(str(count) + ": ", "magenta") + item[3] + "\n"
-                            count += 1
-                        print(the_items)
-                        itemID = input("Enter the " + colored("item", "magenta") + " you would like to claim: ")
+                        if zero_items:
+                            print(the_items)
+                            print("No items posted!")
+                            print()
+                        else:
+                            count = 1
+                            the_items = the_items + "\n"
+                            for item in items:
+                                the_items = the_items + colored(str(count) + ": ", "magenta") + item[3] + "\n"
+                                count += 1
+                            print(the_items)
+                        itemID = input("Enter the " + colored("item", "magenta") + " you would like to claim, or " + colored("Q", "red") + " to go back: ")
+                        if itemID.lower() == "q" or zero_items:
+                            clear()
+                            print("\n\nReturning to main menu...\n\n")
+                            time.sleep(0.5)
+                            break
                         try:
                             itemID = int(itemID)
                             if itemID >= 1 and itemID <= len(items):
                                 while True:
                                     clear()
-                                    print(the_items)
                                     claim_input = input(f"Are you sure you'd like to claim item {itemID}? " + colored("Y", "green") + "/" + colored("N\n\n", "red"))
                                     if claim_input.lower() == "y":
-                                        claimItem(itemID, con)
+                                        claimed_item_id = items[itemID-1][0]
+                                        claimItem(claimed_item_id, con)
                                         clear()
                                         print(colored("\n\nItem successfully claimed.\n\n", "green"))
                                         time.sleep(0.5)
@@ -246,26 +259,32 @@ def main():
 
                 ### View all posts    
                 elif(skip_to_posts or number == 3):
+                    # Select all lost items
+                    cur.execute("SELECT * FROM Item WHERE Status_ID = 1")
+                    items = cur.fetchall()
+                    
+
+                    zero_items = len(items) == 0
                     clear()
                     print(colored("All posts:", "magenta"))
                     print()
                     
-                    # Select all lost items
-                    cur.execute("SELECT * FROM Item WHERE Status_ID = 1")
-                    items = cur.fetchall()
 
-                    # Print description of every current posted item
-                    count = 1
-                    for item in items:
-                        print(colored(str(count) + ": ", "magenta") + item[3])
-                        count += 1
+                    if zero_items:
+                        print("No items posted!")
+                    else:
+                        # Print description of every current posted item
+                        count = 1
+                        for item in items:
+                            print(colored(str(count) + ": ", "magenta") + item[3])
+                            count += 1
 
                     # Ask user to pick an item to view more details about it
                     print()
                     item_num = input("Enter " + colored("Q", "red") + " to return to the main menu, or " + colored("enter an item number", "magenta") + " to view details: ")    
 
                     # Handle user going from all posts to main menu
-                    if item_num.lower() == "q":
+                    if item_num.lower() == "q" or zero_items:
                         skip_to_posts = False
                         clear()
                         print("\n\nReturning to main menu...\n\n")
@@ -378,7 +397,7 @@ def main():
             print(colored("\n\nEnter a valid option please!\n\n", "red"))
             time.sleep(.5)
     clear()
-    print("Session ended.")
+    print("Goodbye!")
 
 ### Clears the terminal
 def clear():
