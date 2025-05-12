@@ -1,6 +1,10 @@
 # Database Final Project -- Harrison, Porter, and Josh
 
-### Description
+### Setting up
+# Install dependencies
+
+
+
 
 This Lost and Found application is designed specifically for the University of St. Thomas community. Its primary goal is to provide a centralized platform where students can easily log and track lost items on campus. Users are required to log in using their UST email to ensure accountability and allow communication.
 
