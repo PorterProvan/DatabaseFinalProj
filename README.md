@@ -16,7 +16,7 @@ The `config.py` contains the file path to the database should it for whatever re
 
 Navigation is done by simple text-based menu interaction. 
 
-Upon launching the app, users are prompted to login with their University of Saint Thomas email. No password is required. Signing in will only work if the "username" is 8 characters long (i.e. john1234) and the domain name is "@stthomas.edu".
+Upon launching the app, users are prompted to "login" with their University of Saint Thomas (UST) email. No password is required, the only purpose for this is to tie your UST email to the posts you may create. Logging in will only work if the "username" is 8 characters long (i.e. john1234) and the domain name is "@stthomas.edu".
 
 Upon signing in, users are displayed with several options. Instructions for selecting options or going back are made clear for the page that the user is on. Input a number or letter that corresponds with the options displayed and press enter to bounce between menus.
 
