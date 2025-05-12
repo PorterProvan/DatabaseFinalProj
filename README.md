@@ -8,6 +8,10 @@ Install the sole dependency by running:
 
 Because this is a console/terminal-based app, we used this library to add color to print text.
 
+## Config
+
+The `config.py` contains the file path to the database should it for whatever reason be different on your machine.
+
 ## Navigating the App
 
 Navigation is done by simple text-based menu interaction. 
