@@ -188,37 +188,7 @@ def claimItem(item_id, conn):
 
     #commit the change and close the connection
     conn.commit()
-    
-#This function is used to update the status of items that have been posted for more than 2 weeks to "Donated".
-def updateDonated(conn):
-    cursor = conn.cursor()
 
-    #get the Status_ID for "Donated"
-    cursor.execute("SELECT Status_ID FROM Status WHERE Status = 'Donated'")
-    result = cursor.fetchone()
-    
-    if not result:
-        print("Error: 'Donated' status not found in the database.")
-        return
-    
-    donated_status_id = result[0]
-
-    #get the date 2 weeks ago
-    two_weeks_ago = (datetime.now() - timedelta(weeks=2)).strftime("%Y-%m-%d")
-
-    #update items posted more than 2 weeks ago
-    cursor.execute("""
-        UPDATE Item
-        SET Status_ID = ?
-        WHERE Date(Date_Posted) < Date(?)
-    """, (donated_status_id, two_weeks_ago))
-
-    conn.commit()
-
-    if cursor.rowcount > 0:
-        print(f"Successfully updated {cursor.rowcount} items to 'Donated'.")
-    else:
-        print("No items found that were posted more than 2 weeks ago.")
 
 ### Clears the terminal
 def clear():
