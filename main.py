@@ -4,9 +4,6 @@ from otherFuncs import addLostItem, claimItem
 from termcolor import colored
 import time
 
-#from datetime import datetime, timedelta
-
-# DONT TOUCH DIS
 userID = None
 con = sqlite3.connect(DB_PATH)
 
