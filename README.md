@@ -1,6 +1,6 @@
 # Database Final Project -- Harrison, Porter, and Josh
 
-## Setting Up:
+## Setting Up
 
 Install the sole dependency by running:
 
